@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardianes de la Red - Feria de Innovación 2026</title>
+<style>
+:root{
+  --bg:#070b18; --panel:#10182b; --panel2:#16213a; --line:#26385f;
+  --text:#f4f7ff; --muted:#aab7d2; --cyan:#18d7ff; --blue:#3d6cff;
+  --purple:#8b4dff; --green:#23e58a; --red:#ff496c; --yellow:#ffd34e;
+  --orange:#ff8b38;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; padding:18px;
+  font-family:Arial,Helvetica,sans-serif; color:var(--text);
+  background:
+    radial-gradient(circle at 15% 10%,rgba(24,215,255,.18),transparent 25%),
+    radial-gradient(circle at 88% 18%,rgba(139,77,255,.2),transparent 27%),
+    radial-gradient(circle at 50% 100%,rgba(61,108,255,.15),transparent 35%),
+    #070b18;
+}
+body:before{
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.14;
+  background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:34px 34px;
+}
+.app{
+  width:min(980px,100%); margin:auto; position:relative; z-index:1;
+  background:linear-gradient(145deg,#10182b,#0c1324);
+  border:1px solid #24365d; border-radius:26px; overflow:hidden;
+  box-shadow:0 25px 70px rgba(0,0,0,.5),0 0 45px rgba(24,215,255,.07);
+}
+header{
+  position:relative; text-align:center; padding:24px 22px 26px;
+  background:linear-gradient(135deg,#111d38,#14112e);
+  border-bottom:1px solid #26385f; overflow:hidden;
+}
+header:before,header:after{
+  content:""; position:absolute; border-radius:50%; pointer-events:none;
+}
+header:before{width:180px;height:180px;left:-90px;top:-90px;background:rgba(24,215,255,.14)}
+header:after{width:210px;height:210px;right:-105px;top:-110px;background:rgba(139,77,255,.14)}
+.badge{
+  display:inline-block; position:relative; z-index:1; padding:9px 14px;
+  border:1px solid #31517d; border-radius:8px; background:#0b1324;
+  color:#8eeaff; font-size:13px; font-weight:900; letter-spacing:.6px;
+  box-shadow:0 0 18px rgba(24,215,255,.08);
+}
+h1{
+  position:relative; z-index:1; margin:13px 0 5px; font-size:clamp(31px,6vw,52px);
+  text-transform:uppercase; letter-spacing:1px;
+  background:linear-gradient(90deg,#fff,#6eeaff 45%,#a978ff);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.subtitle{position:relative;z-index:1;margin:0;color:var(--muted);font-size:16px}
+main{padding:28px}
+.screen{display:none}.screen.active{display:block}
+.intro{text-align:center;padding:8px 8px 16px}
+.hero-art{width:150px;height:150px;margin:4px auto 16px;display:block;filter:drop-shadow(0 0 20px rgba(24,215,255,.2))}
+.intro h2{font-size:32px;margin:8px 0 10px;text-transform:uppercase}
+.intro p{max-width:700px;margin:0 auto 24px;color:var(--muted);font-size:17px;line-height:1.6}
+.mini-icons{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:0 auto 24px}
+.mini-icon{
+  width:52px;height:52px;border:1px solid #2c4471;border-radius:14px;
+  background:#0d172b;display:flex;align-items:center;justify-content:center;
+  color:var(--cyan);font-size:25px;box-shadow:inset 0 0 18px rgba(24,215,255,.05);
+}
+button{
+  border:0;border-radius:12px;padding:14px 22px;font-size:17px;font-weight:900;
+  cursor:pointer;color:white;background:linear-gradient(135deg,#3d6cff,#8b4dff);
+  box-shadow:0 9px 24px rgba(61,108,255,.25); transition:.15s;
+}
+button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+button:active{transform:translateY(1px)}
+.game-top{
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-bottom:16px;
+}
+.progress-wrap{
+  padding:14px 16px;border:1px solid #26385f;border-radius:15px;background:#0c1426;
+}
+.progress-info{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:900;margin-bottom:9px}
+.progress{height:10px;background:#202c47;border-radius:20px;overflow:hidden}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple));box-shadow:0 0 14px rgba(24,215,255,.4);transition:.35s}
+.lives{
+  min-width:138px;padding:12px 14px;border:1px solid #5a2940;border-radius:15px;
+  background:#1a1020;text-align:center;box-shadow:inset 0 0 18px rgba(255,73,108,.05);
+}
+.lives-label{display:block;color:#ff91a8;font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.hearts{font-size:23px;letter-spacing:3px;margin-top:2px}
+.heart.on{color:var(--red);text-shadow:0 0 12px rgba(255,73,108,.55)}
+.heart.off{color:#3b2533}
+.card{
+  position:relative;overflow:hidden;border:1px solid #2b416c;border-radius:20px;
+  padding:25px;background:linear-gradient(145deg,#121d34,#0e172a);
+  box-shadow:0 18px 38px rgba(0,0,0,.28);
+}
+.card:before{
+  content:"";position:absolute;right:-55px;top:-60px;width:180px;height:180px;
+  border-radius:50%;border:1px solid rgba(24,215,255,.13);box-shadow:0 0 0 20px rgba(24,215,255,.025),0 0 0 40px rgba(24,215,255,.018);
+}
+.mission{
+  display:inline-block;padding:7px 11px;border-radius:7px;background:#0a2330;
+  border:1px solid #175a72;color:#5fe5ff;text-transform:uppercase;font-size:12px;
+  font-weight:900;letter-spacing:1px;
+}
+.question{font-size:24px;line-height:1.4;margin:13px 0 20px;font-weight:900;max-width:820px}
+.answers{display:grid;gap:11px}
+.answer{
+  width:100%;text-align:left;background:#121e35;color:#e8eeff;box-shadow:none;
+  border:1px solid #2a4169;border-radius:12px;padding:15px 16px;font-size:16px;
+}
+.answer:hover{background:#172747;border-color:#18bddd;box-shadow:0 0 16px rgba(24,215,255,.08)}
+.answer.correct{background:#0d3429;border-color:#23e58a;color:#7dffc0}
+.answer.wrong{background:#3b1421;border-color:#ff496c;color:#ff9aae}
+.answer:disabled{cursor:default}
+.feedback{
+  margin-top:17px;padding:15px 17px;border-radius:12px;line-height:1.55;
+  font-weight:700;display:none;border-left:4px solid;
+}
+.feedback.show{display:block}.feedback.good{background:#0c2d25;color:#9fffc7;border-color:var(--green)}
+.feedback.bad{background:#321522;color:#ffb2c0;border-color:var(--red)}
+.next{text-align:right;margin-top:18px;display:none}.next.show{display:block}
+.next button{background:linear-gradient(135deg,#167aa4,#3d6cff)}
+.result{text-align:center;padding:8px}
+.victory-art{width:210px;height:170px;margin:0 auto 5px;display:block;filter:drop-shadow(0 0 28px rgba(255,211,78,.22))}
+.result h2{font-size:clamp(30px,6vw,48px);margin:4px 0 8px;text-transform:uppercase}
+.result.victory h2{
+  background:linear-gradient(90deg,#ffd34e,#fff,#23e58a,#18d7ff);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.score-circle{
+  width:154px;height:154px;border-radius:50%;margin:18px auto;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle,#172746 55%,#0d1628 56%);
+  border:5px solid var(--cyan);box-shadow:0 0 35px rgba(24,215,255,.2),inset 0 0 25px rgba(24,215,255,.08);
+  font-size:42px;font-weight:900;color:#fff;
+}
+.result p{font-size:18px;line-height:1.5;color:var(--muted)}
+.tips{
+  margin:20px auto;max-width:680px;text-align:left;background:#0c1528;
+  border:1px solid #2a4169;border-radius:15px;padding:18px 22px;
+}
+.tips strong{color:#5fe5ff}.tips li{margin:9px 0;line-height:1.45;color:#cbd6eb}
+.defeat{border-color:#633044}
+.defeat h2{color:#ff7892}
+footer{text-align:center;padding:0 20px 22px;font-size:12px;color:#71809d}
+.hidden{display:none!important}
+@media(max-width:650px){
+  body{padding:7px}.app{border-radius:19px}main{padding:16px}
+  header{padding:19px 13px 21px}.badge{font-size:10px;line-height:1.4}
+  .game-top{grid-template-columns:1fr}.lives{min-width:0}
+  .question{font-size:20px}.card{padding:18px}.answer{font-size:15px}
+  .hero-art{width:125px;height:125px}.victory-art{width:175px;height:145px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="badge">LA CIBERSEGURIDAD · SEPTIMO C · FERIA DE INNOVACION 2026</div>
+  <h1>Guardianes de la Red</h1>
+  <p class="subtitle">Una misión para aprender a navegar de forma segura</p>
+</header>
+
+<main>
+<section id="intro" class="screen active">
+  <div class="intro">
+    <svg class="hero-art" viewBox="0 0 180 180" aria-label="Escudo de ciberseguridad">
+      <defs><linearGradient id="g1" x1="0" x2="1"><stop stop-color="#18d7ff"/><stop offset="1" stop-color="#8b4dff"/></linearGradient></defs>
+      <path d="M90 12 148 33v48c0 40-25 69-58 87C57 150 32 121 32 81V33z" fill="#101d36" stroke="url(#g1)" stroke-width="7"/>
+      <rect x="57" y="71" width="66" height="49" rx="8" fill="#162b4d" stroke="#18d7ff" stroke-width="4"/>
+      <path d="M70 71V57c0-14 9-24 20-24s20 10 20 24v14" fill="none" stroke="#ffd34e" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="90" cy="92" r="7" fill="#23e58a"/><path d="M90 99v11" stroke="#23e58a" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+    <h2>¿Aceptas la misión?</h2>
+    <p>Entra al desafío de los Guardianes de la Red. Tendrás <strong>3 vidas</strong> para superar 5 preguntas aleatorias.</p>
+    <div class="mini-icons">
+      <div class="mini-icon">🔐</div><div class="mini-icon">🛡️</div><div class="mini-icon">💻</div>
+      <div class="mini-icon">⚡</div><div class="mini-icon">🌐</div>
+    </div>
+    <button onclick="startGame()">INICIAR MISIÓN</button>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="game-top">
+    <div class="progress-wrap">
+      <div class="progress-info"><span id="progressText">Pregunta 1 de 5</span><span id="scoreText">Puntos: 0</span></div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+    </div>
+    <div class="lives">
+      <span class="lives-label">Vidas restantes</span>
+      <div class="hearts" id="hearts">♥ ♥ ♥</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="mission" id="missionLabel">Misión · Pregunta 1</div>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="next" id="nextBox"><button onclick="nextQuestion()">SIGUIENTE ➜</button></div>
+  </div>
+</section>
+
+<section id="result" class="screen">
+  <div class="result" id="resultBox">
+    <svg class="victory-art" viewBox="0 0 240 190" aria-label="Victoria">
+      <defs><linearGradient id="vg" x1="0" x2="1"><stop stop-color="#ffd34e"/><stop offset=".5" stop-color="#18d7ff"/><stop offset="1" stop-color="#8b4dff"/></linearGradient></defs>
+      <path d="M120 18l16 37 40 3-31 26 10 40-35-22-35 22 10-40-31-26 40-3z" fill="#182846" stroke="url(#vg)" stroke-width="5"/>
+      <path d="M86 99l23 23 48-52" fill="none" stroke="#23e58a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M30 32l9 17M210 32l-9 17M25 90h18M215 90h-18" stroke="#ffd34e" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="48" cy="143" r="5" fill="#18d7ff"/><circle cx="195" cy="145" r="5" fill="#8b4dff"/>
+    </svg>
+    <h2 id="resultTitle">¡GRAN TRIUNFO!</h2>
+    <div class="score-circle"><span id="finalScore">0/5</span></div>
+    <p id="finalMessage"></p>
+    <div class="tips">
+      <strong>REGLAS DEL GUARDIÁN:</strong>
+      <ul>
+        <li>Usa contraseñas fuertes y diferentes.</li>
+        <li>Activa la autenticación multifactor cuando esté disponible.</li>
+        <li>No abras enlaces o archivos sospechosos.</li>
+        <li>Protege tus datos personales.</li>
+        <li>Si ocurre un incidente, conserva las evidencias y cuéntaselo a un adulto de confianza.</li>
+      </ul>
+    </div>
+    <button onclick="restartGame()">JUGAR OTRA VEZ</button>
+  </div>
+</section>
+</main>
+
+<footer>Feria de Innovación 2026 · Ciberseguridad</footer>
+</div>
+
+<script>
+const questions = [
+  {
+    q:"Recibes un mensaje que dice: “¡Ganaste un premio! Haz clic aquí e inicia sesión ahora”. El enlace te parece extraño. ¿Qué haces?",
+    a:[
+      "Hago clic rápidamente para reclamar el premio.",
+      "Comparto el mensaje con mis amigos.",
+      "No abro el enlace y verifico la información por un medio confiable.",
+      "Escribo mi contraseña para comprobar si funciona."
+    ],
+    correct:2,
+    good:"El phishing intenta engañarte para que entregues información o accedas a un sitio falso. Verificar el mensaje antes de hacer clic ayuda a proteger tus cuentas.",
+    bad:"No conviene hacer clic solo porque el mensaje promete un premio. Los mensajes inesperados pueden usar el phishing para llevarte a sitios falsos o pedirte datos."
+  },
+  {
+    q:"¿Cuál de estas opciones es una mejor práctica para las contraseñas?",
+    a:[
+      "Usar la misma contraseña para todas mis cuentas.",
+      "Usar contraseñas fuertes y diferentes para cada cuenta.",
+      "Compartir mi contraseña con mis compañeros de confianza.",
+      "Usar mi nombre y fecha de nacimiento."
+    ],
+    correct:1,
+    good:"Una contraseña diferente por cuenta limita el daño si una de ellas llega a quedar expuesta. Además, debe mantenerse privada.",
+    bad:"Usar la misma contraseña en varias cuentas aumenta el riesgo: si una se descubre, otras cuentas también pueden quedar expuestas."
+  },
+  {
+    q:"Una cuenta ofrece autenticación multifactor (MFA). ¿Qué conviene hacer?",
+    a:[
+      "Desactivarla porque hace más lento el acceso.",
+      "Activarla para añadir una capa adicional de protección.",
+      "Compartir el código de verificación con un amigo.",
+      "Usarla solamente cuando alguien me lo pida."
+    ],
+    correct:1,
+    good:"La MFA agrega una segunda comprobación además de la contraseña. Por eso, aunque alguien consiga tu contraseña, todavía existe otra barrera de protección.",
+    bad:"Desactivar MFA elimina una capa de protección importante. Tampoco debes compartir códigos de verificación, aunque quien los pida diga conocerte."
+  },
+  {
+    q:"Una persona que conociste por internet te pide tu dirección, colegio y otros datos personales. ¿Qué haces?",
+    a:[
+      "Le doy todos los datos para que me conozca mejor.",
+      "Publico los datos en mis redes sociales.",
+      "Protejo mi información personal y consulto con un adulto de confianza.",
+      "Le envío una foto de un documento personal."
+    ],
+    correct:2,
+    good:"Los datos como dirección, colegio o documentos pueden revelar información sobre ti. Compartirlos solo con personas y medios confiables ayuda a proteger tu privacidad.",
+    bad:"Publicar o enviar datos personales a desconocidos puede exponer información que debería mantenerse privada. Si tienes dudas, habla con un adulto de confianza."
+  },
+  {
+    q:"Notas que alguien entró sin permiso a una de tus cuentas. ¿Cuál es una respuesta adecuada?",
+    a:[
+      "Ignorarlo y continuar usando la cuenta normalmente.",
+      "Borrar todo para que nadie se entere.",
+      "Conservar las evidencias, proteger la cuenta y contárselo a un adulto de confianza.",
+      "Publicar los datos de la persona responsable."
+    ],
+    correct:2,
+    good:"Conservar evidencias puede ayudar a explicar qué ocurrió y pedir ayuda correctamente. Después conviene proteger la cuenta y avisar a un adulto de confianza.",
+    bad:"Borrar evidencias o publicar información de otra persona puede empeorar el problema. Es mejor conservar lo ocurrido, proteger la cuenta y pedir ayuda."
+  },
+  {
+    q:"¿Qué es el phishing?",
+    a:["Un método para mejorar la velocidad de internet.","Un intento de engaño para obtener información mediante mensajes, enlaces o sitios falsos.","Una actualización del sistema operativo.","Un tipo de copia de seguridad."],
+    correct:1, good:"El phishing se basa en la ingeniería social: el atacante intenta convencerte de hacer algo que favorezca el acceso a información. Por eso es importante desconfiar de mensajes inesperados.", bad:"El phishing no es una actualización ni una copia de seguridad: es un engaño. Su objetivo puede ser conseguir contraseñas, datos personales o acceso a una cuenta."
+  },
+  {
+    q:"Antes de descargar un archivo, ¿qué es recomendable hacer?",
+    a:["Descargarlo aunque no conozcas su origen.","Verificar que provenga de una fuente confiable.","Desactivar las medidas de seguridad.","Compartirlo primero con otras personas."],
+    correct:1, good:"Una fuente confiable reduce el riesgo de descargar archivos maliciosos. Antes de abrir un archivo, conviene comprobar de dónde viene y si realmente lo necesitas.", bad:"Descargar algo sin conocer su origen puede introducir software malicioso en el dispositivo. Verificar la fuente es una medida básica de prevención."
+  },
+  {
+    q:"¿Por qué es importante mantener actualizados los dispositivos y programas?",
+    a:["Solo para cambiar los colores de la pantalla.","Porque las actualizaciones pueden corregir problemas de seguridad.","Porque elimina la necesidad de usar contraseñas.","Porque hace innecesarias las copias de seguridad."],
+    correct:1, good:"Las actualizaciones pueden corregir fallas que podrían ser aprovechadas por atacantes. Mantener los dispositivos al día es una medida sencilla de prevención.", bad:"Las actualizaciones de seguridad corrigen problemas que pueden ser aprovechados por atacantes. Ignorarlas puede dejar el dispositivo más vulnerable."
+  },
+  {
+    q:"¿Cuál de estos datos conviene evitar publicar abiertamente en internet?",
+    a:["El nombre de una mascota ficticia.","Una canción que te gusta.","Tu dirección y otros datos personales sensibles.","El nombre de un videojuego."],
+    correct:2, good:"La dirección y otros datos personales pueden revelar dónde localizarte o información sobre tu vida. Es mejor mantener esos datos protegidos y compartirlos solo cuando sea necesario.", bad:"Los datos sensibles no deberían publicarse solo porque parezcan normales. Una dirección puede revelar información privada sobre dónde vive o estudia una persona."
+  },
+  {
+    q:"Si recibes un mensaje de un desconocido que te pide una foto privada, ¿qué es más seguro?",
+    a:["Enviar la foto para no parecer descortés.","Publicarla en un grupo.","No enviarla y contárselo a un adulto de confianza si te preocupa.","Pedirle al desconocido más información personal."],
+    correct:2, good:"No estás obligado a enviar imágenes privadas a nadie. Si alguien te presiona o te hace sentir incómodo, pedir ayuda a un adulto de confianza es una buena decisión.", bad:"Enviar una imagen privada por presión no resuelve la situación. Lo más seguro es no compartirla y pedir ayuda si alguien insiste o te incomoda."
+  },
+  {
+    q:"¿Qué significa proteger la privacidad en internet?",
+    a:["Compartir toda la información para que otros te conozcan.","Controlar qué información personal compartes y con quién.","Usar la misma contraseña en todas partes.","Aceptar todas las solicitudes de personas desconocidas."],
+    correct:1, good:"La privacidad significa decidir qué información compartes, con quién y en qué situación. No todo lo que parece inofensivo debe hacerse público.", bad:"La privacidad no significa publicar todo. Consiste en tener control sobre tu información y decidir cuándo es apropiado compartirla."
+  },
+  {
+    q:"¿Cuál es una característica de una contraseña más segura?",
+    a:["Es fácil de adivinar.","Es igual a tu nombre.","Es difícil de adivinar y no se comparte con otras personas.","Es la misma que usa toda tu familia."],
+    correct:2, good:"Una contraseña segura debe ser difícil de adivinar y mantenerse privada. Evitar datos obvios también reduce las posibilidades de que alguien la descubra.", bad:"Una contraseña basada en información fácil de conocer puede ser más sencilla de adivinar. También es importante no compartirla con otras personas."
+  },
+  {
+    q:"¿Qué debes hacer si un enlace recibido por mensaje te genera dudas?",
+    a:["Abrirlo para averiguar qué contiene.","Verificar la dirección y la información antes de abrirlo.","Enviar tus datos para comprobar el enlace.","Reenviarlo a todos tus contactos."],
+    correct:1, good:"Un enlace puede llevar a una página falsa aunque el mensaje parezca legítimo. Revisar la información y entrar al sitio oficial por un medio conocido es más seguro.", bad:"Abrir un enlace dudoso para descubrir qué contiene puede exponerte a una página falsa. Primero verifica la dirección y la información por un medio confiable."
+  },
+  {
+    q:"¿Qué es el malware?",
+    a:["Software diseñado para causar daño o realizar acciones no autorizadas.","Una contraseña especial.","Una red social.","Un programa para hacer copias de seguridad."],
+    correct:0, good:"Malware es el nombre general para software malicioso. Puede intentar dañar un dispositivo, robar información o realizar acciones sin autorización.", bad:"El malware no es una herramienta de respaldo ni una red social. Es software malicioso que puede afectar el dispositivo o realizar acciones no autorizadas."
+  },
+  {
+    q:"¿Qué conviene hacer al conectarte a una red pública?",
+    a:["Compartir información sensible sin comprobar nada.","Evitar realizar acciones delicadas si la red no es confiable y proteger tus datos.","Dar tu contraseña a otras personas.","Desactivar todas las medidas de seguridad."],
+    correct:1, good:"Las redes públicas pueden ofrecer menos control sobre la seguridad de la conexión. Por eso conviene evitar compartir información delicada cuando no confías en la red.", bad:"En una red pública es mejor ser cuidadoso con información sensible. Evita realizar acciones delicadas si no puedes confiar en la seguridad de la conexión."
+  },
+  {
+    q:"¿Por qué es importante cerrar sesión en una computadora compartida?",
+    a:["Para que otra persona pueda entrar a tu cuenta.","Para evitar que otra persona acceda a tu cuenta.","Para borrar internet.","Para cambiar automáticamente tu contraseña."],
+    correct:1, good:"En una computadora compartida, dejar una sesión abierta puede permitir que otra persona vea o use tu cuenta. Cerrar sesión evita ese acceso accidental o no autorizado.", bad:"Dejar una sesión abierta en un equipo compartido puede permitir que otra persona entre a tu cuenta. Cerrar sesión reduce ese riesgo."
+  },
+  {
+    q:"¿Para qué sirven las copias de seguridad?",
+    a:["Para recuperar información si se pierde o resulta dañada.","Para compartir contraseñas.","Para hacer públicos tus archivos.","Para evitar todas las actualizaciones."],
+    correct:0, good:"Una copia de seguridad es una segunda copia de tus archivos importantes. Puede ayudarte a recuperar información si se pierde, se daña o deja de estar disponible.", bad:"Las copias de seguridad no sirven para compartir contraseñas ni eliminan la necesidad de otras medidas de seguridad. Su función principal es permitir recuperar información."
+  },
+  {
+    q:"Si alguien te pide tu código de verificación de una cuenta, ¿qué haces?",
+    a:["Se lo das porque dice ser tu amigo.","Lo publicas en un grupo.","No lo compartes y verificas la situación por un medio confiable.","Lo envías junto con tu contraseña."],
+    correct:2, good:"Los códigos de verificación funcionan como una protección adicional y deben mantenerse privados. Si alguien los solicita inesperadamente, verifica la situación por un medio confiable.", bad:"Un código de verificación puede ser necesario para acceder a una cuenta. Compartirlo puede facilitar que otra persona supere una protección importante."
+  },
+  {
+    q:"¿Qué es la suplantación de identidad en internet?",
+    a:["Cuando una persona se hace pasar por otra para engañar o conseguir información.","Cuando cambias tu foto de perfil.","Cuando actualizas una aplicación.","Cuando haces una copia de seguridad."],
+    correct:0, good:"La suplantación ocurre cuando alguien intenta hacerse pasar por otra persona. Puede utilizarse para engañar, obtener información o conseguir que alguien realice una acción.", bad:"La suplantación no consiste en cambiar una foto de perfil. Se trata de hacerse pasar por otra persona con intención de engañar o conseguir información."
+  },
+  {
+    q:"Si observas una situación de ciberacoso, ¿qué es recomendable hacer?",
+    a:["Participar para que el problema crezca.","Compartir el contenido para hacerlo más conocido.","No continuar con el acoso, conservar evidencias y pedir ayuda a un adulto de confianza.","Responder con insultos."],
+    correct:2, good:"El ciberacoso puede empeorar si se comparte o se responde con más agresiones. Conservar evidencias y buscar ayuda permite actuar de manera responsable.", bad:"Responder con insultos o difundir el contenido puede aumentar el daño. Es preferible detener la participación, conservar evidencias y buscar ayuda."
+  },
+  {
+    q:"¿Cuál de estas acciones ayuda a proteger una cuenta?",
+    a:["Compartir la contraseña con amigos.","Usar la misma contraseña en todos los servicios.","Activar MFA y mantener la contraseña privada.","Anotar la contraseña en una publicación pública."],
+    correct:2, good:"MFA y una contraseña privada trabajan como capas de protección. Juntas dificultan que otra persona pueda entrar a tu cuenta.", bad:"Compartir contraseñas o publicarlas elimina parte de la protección de la cuenta. MFA y una contraseña privada son medidas más seguras."
+  },
+  {
+    q:"¿Qué debes hacer si sospechas que un archivo descargado es malicioso?",
+    a:["Abrirlo varias veces para comprobarlo.","Compartirlo con otras personas.","No continuar con su uso y pedir ayuda a un adulto de confianza o responsable del dispositivo.","Publicarlo en internet."],
+    correct:2, good:"Un archivo sospechoso puede contener software malicioso. Lo más prudente es no seguir utilizándolo y pedir ayuda a una persona responsable del dispositivo.", bad:"Abrir o compartir un archivo sospechoso puede aumentar el riesgo para el dispositivo y otras personas. Lo mejor es detenerse y pedir ayuda."
+  },
+  {
+    q:"¿Cuál es una buena razón para no compartir tu contraseña?",
+    a:["Porque puede permitir que otra persona entre a tu cuenta.","Porque cambia el color de la pantalla.","Porque hace más lenta la computadora.","Porque elimina tus contactos."],
+    correct:0, good:"Una contraseña funciona como una llave de acceso a una cuenta. Si otra persona la conoce, podría intentar entrar, por eso no debe compartirse.", bad:"Compartir una contraseña permite que otra persona pueda intentar entrar a la cuenta. Mantenerla privada es una regla básica de seguridad."
+  },
+  {
+    q:"¿Qué información puede ser especialmente importante proteger?",
+    a:["Datos personales, contraseñas y códigos de acceso.","El nombre de una película.","El título de una canción.","El color que prefieres."],
+    correct:0, good:"Los datos personales, contraseñas y códigos pueden permitir el acceso a cuentas o revelar información privada. Protegerlos reduce riesgos innecesarios.", bad:"Los datos personales y códigos de acceso pueden utilizarse para identificarte o entrar a cuentas. Por eso requieren más protección que información pública como una canción."
+  }
+];
+
+let current=0, score=0, lives=3, answered=false;
+let availableQuestions=[];
+let previousRound=[];
+
+function shuffle(array){
+  const copy=[...array];
+  for(let i=copy.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]]=[copy[j],copy[i]];
+  }
+  return copy;
+}
+
+function getRound(){
+  if(availableQuestions.length<5){
+    const previousIds=new Set(previousRound.map(q=>q._id));
+    const pool=questions.filter(q=>!previousIds.has(q._id));
+    availableQuestions=shuffle(pool.length>=5 ? pool : questions);
+  }
+  const round=availableQuestions.splice(0,5);
+  previousRound=round;
+  return round;
+}
+
+function prepareQuestions(){
+  questions.forEach((q,i)=>q._id=i);
+  availableQuestions=shuffle(questions);
+  previousRound=[];
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function updateLives(){
+  const hearts=document.getElementById('hearts');
+  hearts.innerHTML='';
+  for(let i=0;i<3;i++){
+    const span=document.createElement('span');
+    span.className='heart '+(i<lives?'on':'off');
+    span.textContent='♥';
+    hearts.appendChild(span);
+    if(i<2) hearts.appendChild(document.createTextNode(' '));
+  }
+}
+
+function startGame(){
+  current=0; score=0; lives=3; answered=false;
+  window.roundQuestions=getRound();
+  updateLives();
+  show('game');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered=false;
+  const item=window.roundQuestions[current];
+  document.getElementById('progressText').textContent=`Pregunta ${current+1} de 5`;
+  document.getElementById('scoreText').textContent=`Puntos: ${score}`;
+  document.getElementById('bar').style.width=`${(current/5)*100}%`;
+  document.getElementById('missionLabel').textContent=`Misión · Pregunta ${current+1}`;
+  document.getElementById('question').textContent=item.q;
+
+  const box=document.getElementById('answers');
+  box.innerHTML='';
+  const optionIndexes = shuffle(item.a.map((_,i)=>i));
+  item.shuffled = optionIndexes;
+  optionIndexes.forEach((originalIndex,i)=>{
+    const btn=document.createElement('button');
+    btn.className='answer';
+    btn.textContent=String.fromCharCode(65+i)+". "+item.a[originalIndex];
+    btn.onclick=()=>choose(originalIndex,btn);
+    box.appendChild(btn);
+  });
+
+  const fb=document.getElementById('feedback');
+  fb.className='feedback';
+  fb.textContent='';
+  document.getElementById('nextBox').className='next';
+}
+
+function choose(index,btn){
+  if(answered)return;
+  answered=true;
+  const item=window.roundQuestions[current];
+  document.querySelectorAll('.answer').forEach(b=>b.disabled=true);
+
+  if(index===item.correct){
+    score++;
+    btn.classList.add('correct');
+    showFeedback(true,item.good);
+    document.getElementById('scoreText').textContent=`Puntos: ${score}`;
+    document.getElementById('bar').style.width=`${((current+1)/5)*100}%`;
+  }else{
+    lives--;
+    updateLives();
+    btn.classList.add('wrong');
+    document.querySelectorAll('.answer')[item.correct].classList.add('correct');
+    showFeedback(false,item.bad);
+    document.getElementById('scoreText').textContent=`Puntos: ${score}`;
+    document.getElementById('bar').style.width=`${((current+1)/5)*100}%`;
+
+    if(lives===0){
+      setTimeout(showResult, 650);
+      return;
+    }
+  }
+}
+
+function showFeedback(good,text){
+  const fb=document.getElementById('feedback');
+  fb.className='feedback show '+(good?'good':'bad');
+  fb.textContent=(good?'✓ CORRECTO · ':'✦ APRENDE · ')+text;
+  document.getElementById('nextBox').className='next show';
+  document.querySelector('#nextBox button').textContent='SIGUIENTE ➜';
+}
+
+function nextQuestion(){
+  if(lives===0){
+    showResult();
+    return;
+  }
+  if(current<4){
+    current++;
+    renderQuestion();
+  }else{
+    showResult();
+  }
+}
+
+function showResult(){
+  show('result');
+  const resultBox=document.getElementById('resultBox');
+  const title=document.getElementById('resultTitle');
+  const msg=document.getElementById('finalMessage');
+  document.getElementById('finalScore').textContent=`${score}/5`;
+  resultBox.classList.remove('victory','defeat');
+
+  if(score===5 && lives>0){
+    resultBox.classList.add('victory');
+    title.textContent='MISIÓN COMPLETADA';
+    msg.textContent='¡Excelente! Respondiste correctamente todas las preguntas. ¡Eres un verdadero Guardián de la Red!';
+  }else if(lives===0){
+    resultBox.classList.add('defeat');
+    title.textContent='INTÉNTALO DE NUEVO';
+    msg.textContent='Se terminaron tus 3 vidas. No te preocupes: aprende de las explicaciones y vuelve a intentarlo.';
+  }else{
+    resultBox.classList.add('defeat');
+    title.textContent='INTÉNTALO DE NUEVO';
+    msg.textContent=`No completaste todas las preguntas correctamente. Obtuviste ${score}/5. ¡Vuelve a intentarlo y consigue la Misión Completada!`;
+  }
+}
+
+function restartGame(){startGame();}
+prepareQuestions();
+</script>
+</body>
+</html>
